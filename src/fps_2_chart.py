@@ -313,7 +313,7 @@ def main(args):
 
 
 @Gooey(
-    program_name="Framerate Graph Generator",
+    program_name="帧率图表生成器",
     default_size=(1280, 720),
     optional_cols=3,
     advanced=True,
@@ -321,14 +321,14 @@ def main(args):
     clear_before_run=True,
     menu=[
         {
-            "name": "Framerate Graph Generator",
+            "name": "帧率图表生成器",
             "items": [{
                 "type": "AboutDialog",
-                "menuTitle": "About",
-                "description": "Create live video graphs of recorded FPS values",
-                "version": "0.8",
+                "menuTitle": "关于",
+                "description": "创建记录FPS值的实时视频图表\n汉化：吊打小逗比",
+                "version": "0.8-CN",
                 "copyright": "2020",
-                "website": "https://github.com/HunterAP/FPS_Graph_Maker",
+                "website": "https://github.com/DDXDB/FPS_Graph_Maker-CN",
                 "license": "GPLv3",
             }],
         },
@@ -340,7 +340,7 @@ def parse_arguments():
     main_help = "Plot CSV report to to a live video graph."
     parser = GooeyParser(description=main_help, formatter_class=RawTextHelpFormatter)
     parser.add_argument(
-        "CSV_Report",
+        "CSV报告",
         widget="FileChooser",
         gooey_options={
             "default_dir": str(Path(__file__).parent),
@@ -348,14 +348,14 @@ def parse_arguments():
             "initial_value": "CSV Report",
             "wildcard": "Comma separated file (*.csv)|*.csv|" "All files (*.*)|*.*",
         },
-        help="CSV report file.",
+        help="CSV报告文件.",
     )
 
-    output_help = 'Output filename (Default: "graph").\n'
-    output_help += 'Depending on what you generate, the output files will have "_fps" or "_frametime" or "_both" appended to them\n'
-    output_help += '(IE: "graph" would generate "graph_fps.mov").'
+    output_help = '输出文件名 (默认: "graph").\n'
+    output_help += '根据您生成的内容，输出将附加"_fps"或"_frametime"或"_both"在后面\n'
+    output_help += '(示例: "graph"将输出"graph_fps.mov").'
     parser.add_argument(
-        "Output",
+        "输出",
         default="graph",
         widget="FileSaver",
         gooey_options={
@@ -368,47 +368,47 @@ def parse_arguments():
     )
 
     export_group = parser.add_argument_group(
-        "Export Options", "Choose what files to export."
+        "导出选项", "选择要导出的文件。"
     )
     Export_FPS_help = (
-        "Check the box if you want to generate and export the FPS graph.\n"
+        "如果想要生成和导出FPS图表，请勾选此框。\n"
     )
     export_group.add_argument(
         "--fps",
-        dest="Export_FPS",
+        dest="导出FPS",
         action="store_true",
         help=Export_FPS_help,
     )
 
     Export_Frametime_help = (
-        "Check the box if you want to generate and export the Frametime graph.\n"
+        "如果要生成并导出Frametime图表，请选中此框。\n"
     )
     export_group.add_argument(
         "--frametime",
-        dest="Export_Frametime",
+        dest="导出Frametime",
         action="store_true",
         help=Export_Frametime_help,
     )
 
-    Export_Combined_help = "Check the box if you want to generate and export the combined FPS + Frametime graph.\n"
+    Export_Combined_help = "如果你想生成并导出FPS + Frametime的组合图表，请勾选此框。\n"
     export_group.add_argument(
         "--combined",
-        dest="Export_Combined",
+        dest="导出组合",
         action="store_true",
         help=Export_Combined_help,
     )
 
     quality_group = parser.add_argument_group(
-        "Quality Options",
-        "Choose what resolution and DPI the exported graph files are exported at.",
+        "质量选项",
+        "选择导出图表文件的分辨率和DPI。",
     )
-    res_help = "Choose the resolution for the graph video (Default is 1080p).\n"
-    res_help += "Note that higher values will mean drastically larger files and take substantially longer to encode."
+    res_help = "选择图表视频的分辨率（默认: 1080p）。\n"
+    res_help += "请注意，数值越高意味着文件越大，编码时间也就越长。"
     quality_group.add_argument(
         "-r",
         "--resolution",
         type=str,
-        dest="Resolution",
+        dest="分辨率",
         default="1080p",
         choices=["720p", "1080p", "1440p", "4k"],
         widget="Dropdown",
@@ -418,9 +418,9 @@ def parse_arguments():
         help=res_help,
     )
 
-    dpi_help = "Choose the DPI value for the graph image and video (Default is 100).\n"
-    dpi_help = "A value of 100 means will create a file with the exact resolution that you set, whereas 200 DPI will be 2x the resolution.\n"
-    dpi_help += "Note that higher values will mean drastically larger files and take substantially longer to encode.\n"
+    dpi_help = "选择图表图像和视频的DPI值（默认: 100）。\n"
+    dpi_help = "100意味着与你设置的分辨率相同，而200 DPI将是设置分辨率的2倍。\n"
+    dpi_help += "请注意，数值越高意味着文件越大，编码时间也就越长。\n"
     quality_group.add_argument(
         "-d",
         "--dpi",
@@ -437,11 +437,11 @@ def parse_arguments():
     )
 
     graph_group = parser.add_argument_group(
-        "Graph Options",
-        "Miscellenous graph-related options.",
+        "图表选项",
+        "杂项图表相关选项。",
     )
 
-    yaxis_label_help = "Check the box if you want to show the Y-axis labels on the sides of the exported graphs.\n"
+    yaxis_label_help = "如果希望在导出图表的两侧显示y轴标签，请选中此框。\n"
     graph_group.add_argument(
         "--yaxis-label",
         dest="Yaxis_Label",
@@ -451,9 +451,9 @@ def parse_arguments():
 
     args = parser.parse_args()
 
-    if str(args.CSV_Report) == "CSV Report":
+    if str(args.CSV_Report) == "CSV报告":
         raise ValueError(
-            "CSV Report argument is required but was not provided by the user."
+            "CSV报表参数是必需的，但不是用户提供的。"
         )
 
     if (
