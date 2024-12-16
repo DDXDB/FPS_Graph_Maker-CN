@@ -355,7 +355,7 @@ def parse_arguments():
     output_help += '根据您生成的内容，输出将附加"_fps"或"_frametime"或"_both"在后面\n'
     output_help += '(示例: "graph"将输出"graph_fps.mov").'
     parser.add_argument(
-        "输出",
+        "Output",
         default="graph",
         widget="FileSaver",
         gooey_options={
