@@ -340,7 +340,7 @@ def parse_arguments():
     main_help = "Plot CSV report to to a live video graph."
     parser = GooeyParser(description=main_help, formatter_class=RawTextHelpFormatter)
     parser.add_argument(
-        "CSV报告",
+        "CSV_Report",
         widget="FileChooser",
         gooey_options={
             "default_dir": str(Path(__file__).parent),
