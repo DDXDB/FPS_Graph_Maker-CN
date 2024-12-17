@@ -164,7 +164,7 @@ def main(args):
             "legend.edgecolor": "black",
             "legend.frameon": False,
             "savefig.transparent": True,
-            "animation.codec": "qtrle",
+            "animation.codec": "hevc_qsv",
             "font.size": 26,
         }
     )
@@ -209,8 +209,8 @@ def main(args):
     print("Removing inf frame-time values from doing division-by-zero.")
     with np.errstate(divide="ignore", invalid="ignore"):
         y2 = pd.Series(1000 / df["framerate"])
-    y2[y2 == np.Inf] = np.nan
-    y2[y2 == np.NINF] = np.nan
+    y2[y2 == np.inf] = np.nan
+    y2[y2 == -np.inf] = np.nan
 
     y = y.interpolate(method="cubic")
     y2 = y2.interpolate(method="cubic")
@@ -259,7 +259,7 @@ def main(args):
     if args.Export_FPS:
         plotters["FPS"]["ax"].set_ylim(0, fps_max * 1.1)
         if args.Yaxis_Label:
-            plotters["FPS"]["ax"].set_ylabel("FPS", color="b", fontsize=14)
+            plotters["FPS"]["ax"].set_ylabel("FPS", color="b",fontname="Microsoft YaHei",fontsize=28)
         plotters["FPS"]["filename"] = "{0}_fps.mov".format(args.Output)
         line_fps = mpl.lines.Line2D(x, y, color="b", antialiased=True)
         line_fps.set_animated(True)
@@ -267,7 +267,7 @@ def main(args):
     if args.Export_Frametime:
         plotters["Frametime"]["ax"].set_ylim(0, frametime_max * 1.1)
         if args.Yaxis_Label:
-            plotters["FPS"]["ax"].set_ylabel("Frametime (ms)", color="b", fontsize=14)
+            plotters["FPS"]["ax"].set_ylabel("帧时间（毫秒）", color="b",fontname="Microsoft YaHei",fontsize=28)
         plotters["Frametime"]["filename"] = "{0}_frametime.mov".format(args.Output)
         line_frametime = mpl.lines.Line2D(x, y2, color="r", antialiased=True)
         line_frametime.set_animated(True)
@@ -277,7 +277,7 @@ def main(args):
     if args.Export_Combined:
         plotters["Combined"]["ax"].set_ylim(0, fps_max * 1.1)
         if args.Yaxis_Label:
-            plotters["Combined"]["ax"].set_ylabel("FPS", color="b", fontsize=14)
+            plotters["Combined"]["ax"].set_ylabel("FPS", color="b",fontname="Microsoft YaHei",fontsize=28)
 
         plotters["Combined"]["filename"] = "{0}_combined.mov".format(args.Output)
 
@@ -293,7 +293,7 @@ def main(args):
         plotters["Combined"]["figure"].add_axes(
             plotters["Combined"]["ax2"], animated=True
         )
-        plotters["Combined"]["ax2"].set_ylabel("Frametime (ms)", color="r", fontsize=14)
+        plotters["Combined"]["ax2"].set_ylabel("帧时间（毫秒）", color="r",fontname="Microsoft YaHei",fontsize=28)
         line_combined2 = mpl.lines.Line2D(x, y2, color="r", antialiased=True)
         plotters["Combined"]["line2"] = plotters["Combined"]["ax"].add_line(
             line_combined2
@@ -375,7 +375,7 @@ def parse_arguments():
     )
     export_group.add_argument(
         "--fps",
-        dest="导出FPS",
+        dest="Export_FPS",
         action="store_true",
         help=Export_FPS_help,
     )
@@ -385,7 +385,7 @@ def parse_arguments():
     )
     export_group.add_argument(
         "--frametime",
-        dest="导出Frametime",
+        dest="Export_Frametime",
         action="store_true",
         help=Export_Frametime_help,
     )
@@ -393,14 +393,14 @@ def parse_arguments():
     Export_Combined_help = "如果你想生成并导出FPS + Frametime的组合图表，请勾选此框。\n"
     export_group.add_argument(
         "--combined",
-        dest="导出组合",
+        dest="Export_Combined",
         action="store_true",
         help=Export_Combined_help,
     )
 
     quality_group = parser.add_argument_group(
         "质量选项",
-        "选择导出图表文件的分辨率和DPI。",
+        "选择导出图表文件的分辨率和DPI以及编码格式。",
     )
     res_help = "选择图表视频的分辨率（默认: 1080p）。\n"
     res_help += "请注意，数值越高意味着文件越大，编码时间也就越长。"
@@ -408,7 +408,7 @@ def parse_arguments():
         "-r",
         "--resolution",
         type=str,
-        dest="分辨率",
+        dest="Resolution",
         default="1080p",
         choices=["720p", "1080p", "1440p", "4k"],
         widget="Dropdown",
@@ -417,6 +417,18 @@ def parse_arguments():
         },
         help=res_help,
     )
+    # quality_group.add_argument(
+    #     "-c",
+    #     type=str,
+    #     dest="codec",
+    #     default="qtrle",
+    #     choices=['libx264', 'libx265', 'libvpx-vp9', 'h264_nvenc', 'hevc_nvenc', 'h264_amf', 'hevc_amf', 'h264_qsv', 'hevc_qsv', 'h264_videotoolbox', 'hevc_videotoolbox'],
+    #     widget="Dropdown",
+    #     gooey_options={
+    #         "initial_value": "qtrle",
+    #     },
+    #     help=res_help,
+    # )
 
     dpi_help = "选择图表图像和视频的DPI值（默认: 100）。\n"
     dpi_help = "100意味着与你设置的分辨率相同，而200 DPI将是设置分辨率的2倍。\n"
